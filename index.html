@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUIS_WATERMAP</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        .info-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 200px;
+        }
+        .info-panel h2 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+        .info-panel ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .info-panel li {
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .info-panel li:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="info-panel">
+        <h2>主要建物</h2>
+        <ul id="building-list"></ul>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = L.map('map').setView([35.6566067, 140.0426483], 17);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const buildings = [
+                { name: "2号館", coords: [35.657310, 140.043290] },
+                { name: "3号館", coords: [35.6571232, 140.0430484] },
+                { name: "4号館", coords: [35.65803434073385, 140.04290957812046] },
+                { name: "7号館", coords: [35.65675386781967, 140.04120067567973] },
+                { name: "体育館", coords: [35.65537985430815, 140.0436159350883] },
+                { name: "ミレニアムホール", coords: [35.65618565139854, 140.04461355588595] }
+            ];
+
+            const buildingList = document.getElementById('building-list');
+            const markers = {};
+
+            buildings.forEach(building => {
+                const marker = L.marker(building.coords).addTo(map);
+                marker.bindPopup(building.name);
+                markers[building.name] = marker;
+
+                const listItem = document.createElement('li');
+                listItem.textContent = building.name;
+                listItem.addEventListener('click', () => {
+                    map.setView(building.coords, 18);
+                    marker.openPopup();
+                });
+                buildingList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>
